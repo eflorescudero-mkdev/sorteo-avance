@@ -706,26 +706,41 @@
     spinLbl.textContent = '...';
     statusEl.textContent = 'Who will it be?';
 
-    const duration = 9000 + Math.random() * 2000;
-    // Muchas vueltas = arranque muy rápido; la curva de abajo lo frena poco a poco
-    const turns = 16 + Math.random() * 4;
+    // El giro tiene dos fases que se unen sin brinco (misma velocidad al cambiar):
+    // 1) RÁPIDA: arranca muy rápido y va frenando hasta quedar lenta.
+    // 2) DRAMA: 5 s avanzando de nombre en nombre hasta detenerse.
+    const T1 = 6000;
+    const T2 = 5000;
+    const duration = T1 + T2;
+    const segAng = TAU / segments.length;
+    const D2 = (3 + Math.random() * 2) * segAng;   // en el drama recorre 3–5 nombres
+    const v1 = 2 * D2 / T2;                        // velocidad al entrar al drama
+    const D1 = (12 + Math.random() * 2) * TAU;     // el azar de aquí decide quién gana
+    const v0 = v1 + 3 * (D1 - v1 * T1) / T1;       // velocidad inicial para cubrir D1 en T1
+
+    function avance(ms) {
+      if (ms < T1) {
+        return v1 * ms + (v0 - v1) * T1 / 3 * (1 - Math.pow(1 - ms / T1, 3));
+      }
+      const s = Math.min(1, (ms - T1) / T2);
+      return D1 + D2 * (1 - Math.pow(1 - s, 2));
+    }
+
     const from = rot;
-    const to = rot + turns * TAU + Math.random() * TAU;
     const t0 = performance.now();
     let lastIdx = winnerIndex();
     let drama = 0;
 
     function frame(now) {
-      const t = Math.min(1, (now - t0) / duration);
-      // Con potencia 4 los últimos ~3 s todavía avanza unos cuantos nombres, muy despacio
-      const ease = 1 - Math.pow(1 - t, 4);
-      rot = from + (to - from) * ease;
+      const ms = now - t0;
+      const t = Math.min(1, ms / duration);
+      rot = from + avance(ms);
       draw();
 
-      if (t > 0.88 && drama < 2) {
+      if (ms > T1 + T2 * 0.5 && drama < 2) {
         drama = 2;
         statusEl.textContent = 'Almost there! 👀';
-      } else if (t > 0.65 && drama < 1) {
+      } else if (ms > T1 && drama < 1) {
         drama = 1;
         statusEl.textContent = 'Getting closer…';
       }
