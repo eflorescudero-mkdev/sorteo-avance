@@ -707,7 +707,8 @@
     statusEl.textContent = 'Who will it be?';
 
     const duration = 9000 + Math.random() * 2000;
-    const turns = 7 + Math.random() * 4;
+    // Muchas vueltas = arranque muy rápido; la curva de abajo lo frena poco a poco
+    const turns = 16 + Math.random() * 4;
     const from = rot;
     const to = rot + turns * TAU + Math.random() * TAU;
     const t0 = performance.now();
@@ -716,7 +717,8 @@
 
     function frame(now) {
       const t = Math.min(1, (now - t0) / duration);
-      const ease = 1 - Math.pow(1 - t, 5);
+      // Con potencia 4 los últimos ~3 s todavía avanza unos cuantos nombres, muy despacio
+      const ease = 1 - Math.pow(1 - t, 4);
       rot = from + (to - from) * ease;
       draw();
 
