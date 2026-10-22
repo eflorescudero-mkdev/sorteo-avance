@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ruleta de Lectura · Colegio Avance</title>
+<title>Reading Wheel · Colegio Avance</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Raleway:wght@500;700;800;900&display=swap" rel="stylesheet">
@@ -418,12 +418,12 @@
 <header>
   <img class="logo" src="https://static.wixstatic.com/media/9f5347_9b28551ad03d468a9a8337d084499f6e~mv2.png" alt="Colegio Avance" onerror="this.remove()">
   <div class="titulos">
-    <p class="eyebrow">Colegio Avance · Primaria</p>
-    <h1>Ruleta de <span class="acento">Lectura</span></h1>
+    <p class="eyebrow">Colegio Avance · Elementary</p>
+    <h1>Reading <span class="acento">Wheel</span></h1>
   </div>
 </header>
 
-<p class="sub">¿A quién le toca leer? Cada quien participa una sola vez.</p>
+<p class="sub">Whose turn is it to read? Everyone reads just once.</p>
 
 <div class="stage">
   <svg class="pointer" id="pointer" viewBox="0 0 40 96" aria-hidden="true">
@@ -436,34 +436,34 @@
     <path d="M16.2 83.5 L23.8 83.5 L20 92 Z" fill="#002e5d"/>
   </svg>
   <canvas id="wheel"></canvas>
-  <button id="spin" type="button" aria-label="Girar la ruleta">
+  <button id="spin" type="button" aria-label="Spin the wheel">
     <img src="https://static.wixstatic.com/media/9f5347_9b28551ad03d468a9a8337d084499f6e~mv2.png" alt="" onerror="this.remove()">
-    <span class="lbl">GIRAR</span>
+    <span class="lbl">SPIN</span>
   </button>
 </div>
 
-<p id="status" aria-live="polite">Toca GIRAR para elegir quién lee.</p>
+<p id="status" aria-live="polite">Tap SPIN to choose who reads.</p>
 
-<div class="progreso">
+<div class="progreso" hidden>
   <div class="barra"><div class="relleno" id="relleno"></div></div>
   <p class="cuenta" id="cuenta"></p>
 </div>
 
 <div class="tools">
   <details open>
-    <summary>Ya leyeron</summary>
+    <summary>Already read</summary>
     <ol id="leidos"></ol>
-    <p class="vacio" id="vacio">Todavía nadie. ¡El primero está por salir!</p>
+    <p class="vacio" id="vacio">No one yet. The first reader is coming up!</p>
   </details>
 
   <details>
-    <summary>Editar lista de alumnos</summary>
+    <summary>Edit student list</summary>
     <div class="editor">
-      <p class="hint">Un nombre por línea. Si alguien no vino, puedes quitarlo aquí o tocar la × en "Ya leyeron" para regresarlo a la ruleta.</p>
+      <p class="hint">One name per line. If someone is absent, remove them here, or tap the × in "Already read" to put them back on the wheel.</p>
       <textarea id="names" spellcheck="false"></textarea>
       <div class="row">
-        <button class="btn" id="apply" type="button">Actualizar lista</button>
-        <button class="btn" id="reset" type="button">Empezar de nuevo</button>
+        <button class="btn" id="apply" type="button">Update list</button>
+        <button class="btn" id="reset" type="button">Start over</button>
       </div>
     </div>
   </details>
@@ -472,9 +472,9 @@
 <div id="anuncio" hidden role="dialog" aria-modal="true" aria-labelledby="ganador">
   <div class="tarjeta">
     <div class="libro" aria-hidden="true">📖</div>
-    <p class="toca">¡Te toca leer!</p>
+    <p class="toca">It's your turn to read!</p>
     <p id="ganador"></p>
-    <button id="ok" type="button">¡A LEER!</button>
+    <button id="ok" type="button">LET'S READ!</button>
   </div>
 </div>
 
@@ -704,9 +704,9 @@
     spinBtn.disabled = true;
     spinBtn.classList.add('girando');
     spinLbl.textContent = '...';
-    statusEl.textContent = '¿A quién le tocará?';
+    statusEl.textContent = 'Who will it be?';
 
-    const duration = 6000 + Math.random() * 2000;
+    const duration = 9000 + Math.random() * 2000;
     const turns = 7 + Math.random() * 4;
     const from = rot;
     const to = rot + turns * TAU + Math.random() * TAU;
@@ -722,10 +722,10 @@
 
       if (t > 0.88 && drama < 2) {
         drama = 2;
-        statusEl.textContent = '¡Ya casi! 👀';
+        statusEl.textContent = 'Almost there! 👀';
       } else if (t > 0.65 && drama < 1) {
         drama = 1;
-        statusEl.textContent = 'Ya mero… ya mero…';
+        statusEl.textContent = 'Getting closer…';
       }
 
       const idx = winnerIndex();
@@ -755,7 +755,7 @@
     guardar();
 
     ganadorEl.textContent = name;
-    statusEl.innerHTML = 'Está leyendo <span class="who">' + escapeHtml(name) + '</span>.';
+    statusEl.innerHTML = '<span class="who">' + escapeHtml(name) + '</span> is reading.';
     fanfare();
     confetti();
     renderProgreso();
@@ -783,9 +783,9 @@
   // --- Progreso y lista de los que ya leyeron ---
   function actualizarBoton() {
     if (spinning) return;
-    spinLbl.textContent = segments.length ? 'GIRAR' : 'LISTO';
+    spinLbl.textContent = segments.length ? 'SPIN' : 'DONE';
     if (!segments.length) {
-      statusEl.textContent = '¡Ya leyeron todos! 🎉';
+      statusEl.textContent = 'Everyone has read! 🎉';
     }
   }
 
@@ -793,14 +793,14 @@
     const total = names.length;
     rellenoEl.style.width = (total ? (leidos.length / total) * 100 : 0) + '%';
     const faltan = total - leidos.length;
-    cuentaEl.textContent = 'Han leído ' + leidos.length + ' de ' + total +
-      (faltan ? ' · faltan ' + faltan : '');
+    cuentaEl.textContent = leidos.length + ' of ' + total + ' have read' +
+      (faltan ? ' · ' + faltan + ' left' : '');
 
     vacioEl.hidden = leidos.length > 0;
     leidosEl.innerHTML = leidos.map((n, i) =>
       '<li><span class="num">' + (i + 1) + '</span>' + escapeHtml(n) +
       '<button class="regresar" type="button" data-nombre="' + escapeHtml(n) + '" ' +
-      'aria-label="Regresar a ' + escapeHtml(n) + ' a la ruleta" title="Regresar a la ruleta">×</button></li>'
+      'aria-label="Put ' + escapeHtml(n) + ' back on the wheel" title="Put back on the wheel">×</button></li>'
     ).join('');
   }
 
@@ -885,11 +885,11 @@
 
   document.getElementById('reset').addEventListener('click', () => {
     if (spinning) return;
-    if (!confirm('¿Empezar de nuevo? Todos regresan a la ruleta.')) return;
+    if (!confirm('Start over? Everyone goes back on the wheel.')) return;
     leidos = [];
     guardar();
     refrescarTodo();
-    statusEl.textContent = 'Toca GIRAR para elegir quién lee.';
+    statusEl.textContent = 'Tap SPIN to choose who reads.';
   });
 
   spinBtn.addEventListener('click', spin);
