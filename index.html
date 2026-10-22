@@ -708,12 +708,12 @@
 
     // El giro tiene dos fases que se unen sin brinco (misma velocidad al cambiar):
     // 1) RÁPIDA: arranca muy rápido y va frenando hasta quedar lenta.
-    // 2) DRAMA: 5 s avanzando de nombre en nombre hasta detenerse.
+    // 2) DRAMA: 9 s avanzando de nombre en nombre hasta detenerse.
     const T1 = 6000;
-    const T2 = 5000;
+    const T2 = 9000;
     const duration = T1 + T2;
     const segAng = TAU / segments.length;
-    const D2 = (3 + Math.random() * 2) * segAng;   // en el drama recorre 3–5 nombres
+    const D2 = (4 + Math.random() * 2) * segAng;   // en el drama recorre 4–6 nombres
     const v1 = 2 * D2 / T2;                        // velocidad al entrar al drama
     const D1 = (12 + Math.random() * 2) * TAU;     // el azar de aquí decide quién gana
     const v0 = v1 + 3 * (D1 - v1 * T1) / T1;       // velocidad inicial para cubrir D1 en T1
@@ -737,7 +737,10 @@
       rot = from + avance(ms);
       draw();
 
-      if (ms > T1 + T2 * 0.5 && drama < 2) {
+      if (ms > T1 + T2 * 0.75 && drama < 3) {
+        drama = 3;
+        statusEl.textContent = 'Is it…? 😱';
+      } else if (ms > T1 + T2 * 0.4 && drama < 2) {
         drama = 2;
         statusEl.textContent = 'Almost there! 👀';
       } else if (ms > T1 && drama < 1) {
