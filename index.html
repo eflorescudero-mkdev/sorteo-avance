@@ -323,6 +323,15 @@
 
   .hint { font-size: 13px; color: #5a6b7d; margin: 0; }
 
+  .offline {
+    margin: 18px 16px 0;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #2e7d4f;
+  }
+
   /* --- Anuncio del ganador --- */
   #anuncio {
     position: fixed;
@@ -468,6 +477,8 @@
     </div>
   </details>
 </div>
+
+<p class="offline" id="offline" hidden>✓ Ready to use offline</p>
 
 <div id="anuncio" hidden role="dialog" aria-modal="true" aria-labelledby="ganador">
   <div class="tarjeta">
@@ -920,6 +931,15 @@
   namesEl.value = names.join('\n');
   refrescarTodo();
   if (document.fonts) document.fonts.ready.then(draw);
+
+  // --- Modo sin internet ---
+  // Abre la página una vez con internet; desde ese momento funciona sin conexión.
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => navigator.serviceWorker.ready)
+      .then(() => { document.getElementById('offline').hidden = false; })
+      .catch(() => { /* sin modo offline, la ruleta sigue funcionando en línea */ });
+  }
 </script>
 </body>
 </html>
